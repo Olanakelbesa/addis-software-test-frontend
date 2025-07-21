@@ -2,7 +2,7 @@ import { takeLatest, put, call } from "redux-saga/effects";
 import axios from "axios";
 import { setSongs, addSong, updateSong, deleteSong } from "./songsSlice";
 
-const API_URL = process.env.API_BASE_URL ;
+const API_URL = `${process.env.API_BASE_URL}/songs`;
 
 
 function* fetchSongsSaga() {
