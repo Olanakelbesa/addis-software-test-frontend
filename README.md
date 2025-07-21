@@ -21,7 +21,7 @@ The **frontend** uses **React + Redux Toolkit + Redux-Saga**, while the **backen
 
 ---
 
-## Which parts were assistanced by AI-generated?
+## Which parts were assistanced by AI?
 - Initial **Webpack configuration**.
 
 ---
