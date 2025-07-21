@@ -7,40 +7,41 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
-    clean: true
+    publicPath: "/", 
+    clean: true,
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/, 
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
+          loader: "babel-loader",
+        },
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"]
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: "asset/resource"
-      }
-    ]
+        type: "asset/resource",
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./public/index.html"
+      template: "./public/index.html", 
     }),
-    new Dotenv()
+    new Dotenv(),
   ],
   resolve: {
-    extensions: [".js", ".jsx"] 
+    extensions: [".js", ".jsx"],
   },
   devServer: {
     static: "./dist",
-    historyApiFallback: true,
-    port: 3000
+    historyApiFallback: true, 
+    port: 3000,
   },
-  mode: "development"
+  mode: process.env.NODE_ENV || "production", 
 };
