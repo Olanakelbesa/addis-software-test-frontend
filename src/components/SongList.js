@@ -9,20 +9,20 @@ import {
   HeaderRow,
   Button,
   ActionRow,
-  TitleBtn,
-  ModalOverlay,
-  ModalContent
+  TitleBtn
 } from "../styles/SongListStyles";
-import SongForm from "./SongForm";
+import { useNavigate } from "react-router-dom";
 
 function SongList() {
   const dispatch = useDispatch();
-  const { list, currentPage, pageSize, loading } = useSelector((state) => state.songs);
+  const navigate = useNavigate();
+  const { list = [], currentPage, pageSize, loading, error } = useSelector(
+    (state) => state.songs
+  );
 
   const [editId, setEditId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editArtist, setEditArtist] = useState("");
-  const [showModal, setShowModal] = useState(false); 
 
   const handelEditClick = (song) => {
     setEditId(song._id);
@@ -37,7 +37,10 @@ function SongList() {
     }
     dispatch({
       type: "songs/updateSong",
-      payload: { id, data: { title: editTitle, artist: editArtist, year: new Date().getFullYear() } },
+      payload: {
+        id,
+        data: { title: editTitle, artist: editArtist, year: new Date().getFullYear() }
+      }
     });
     setEditId(null);
     setEditTitle("");
@@ -49,18 +52,37 @@ function SongList() {
   };
 
   const startIndex = (currentPage - 1) * pageSize;
-  const paginatedSongs = list.slice(startIndex, startIndex + pageSize);
-  const totalPages = Math.ceil(list.length / pageSize);
+  const paginatedSongs = Array.isArray(list)
+    ? list.slice(startIndex, startIndex + pageSize)
+    : [];
 
   if (loading) return <p>Loading...</p>;
+
+  if (error) return <p style={{ color: "red" }}>Error loading songs: {error}</p>;
+
+  if (!Array.isArray(list) || list.length === 0) {
+    return (
+      <Container p={3}>
+        <TitleBtn>
+          <h2>Song List</h2>
+          <Button bg="blue" color="white" p={2} onClick={() => navigate("add-song")}>
+            Add Song
+          </Button>
+        </TitleBtn>
+        <p>No songs available. Add a new one!</p>
+      </Container>
+    );
+  }
 
   return (
     <Container p={3}>
       <TitleBtn>
         <h2>Song List</h2>
-        <Button bg={"blue"} color="white" p={2} onClick={() => setShowModal(true)}>
-          Add Song
-        </Button>
+        <div>
+          <Button bg="blue" color="white" p={2} onClick={() => navigate("add-song")}>
+            Add Song
+          </Button>
+        </div>
       </TitleBtn>
 
       <HeaderRow>
@@ -72,7 +94,7 @@ function SongList() {
 
       <SongListWrapper>
         {paginatedSongs.map((song) => (
-          <SongCard key={song._id} bg="white">
+          <SongCard key={song._id || song.title} bg="white">
             <SongColumn>
               {editId === song._id ? (
                 <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
@@ -109,7 +131,7 @@ function SongList() {
       </SongListWrapper>
 
       <div style={{ marginTop: "16px", display: "flex", justifyContent: "center", gap: "8px" }}>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        {Array.from({ length: Math.ceil(list.length / pageSize) }, (_, i) => i + 1).map((page) => (
           <Button
             key={page}
             onClick={() => dispatch(setPage(page))}
@@ -121,17 +143,6 @@ function SongList() {
           </Button>
         ))}
       </div>
-
-      {showModal && (
-        <ModalOverlay onClick={() => setShowModal(false)}>
-          <ModalContent onClick={(e) => e.stopPropagation()}>
-            <SongForm />
-            <Button mt={3} bg="gray" color="white" onClick={() => setShowModal(false)}>
-              Close
-            </Button>
-          </ModalContent>
-        </ModalOverlay>
-      )}
     </Container>
   );
 }

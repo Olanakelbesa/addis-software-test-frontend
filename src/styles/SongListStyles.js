@@ -4,8 +4,12 @@ import { color, space, layout, border, typography } from "styled-system";
 export const Container = styled.div`
   ${space}
   ${layout}
-  width: 50%;
+  width: 100%;
   margin: auto;
+
+  @media (min-width: 768px) {
+    width: 50%; 
+  }
 `;
 
 export const TitleBtn = styled.div`
