@@ -56,6 +56,8 @@ function SongList() {
     ? list.slice(startIndex, startIndex + pageSize)
     : [];
 
+    console.log("songs:", paginatedSongs);
+
   if (loading) return <p>Loading...</p>;
 
   if (error) return <p style={{ color: "red" }}>Error loading songs: {error}</p>;
